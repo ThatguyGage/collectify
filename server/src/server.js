@@ -9,10 +9,10 @@ import itemsRoute from "./routes/items.js";
 
 const app = express();
 
-/* ---------- CORS ---------- */
+
 const allowed = [
   "http://localhost:5173",
-  process.env.CLIENT_ORIGIN, // e.g. your Netlify site
+  process.env.CLIENT_ORIGIN,
 ].filter(Boolean);
 
 app.use(
@@ -25,20 +25,23 @@ app.use(
   })
 );
 
-/* ---------- Middleware & Routes ---------- */
+
 app.use(express.json());
 app.use(morgan("dev"));
 
-app.use("/api/items", itemsRoute);
-app.get("/api/health", (_, res) => res.json({ ok: true }));
 
-/* ---------- Serve built client (if present) ---------- */
+app.use("/api/items", itemsRoute);
+app.get("/api/health", (_req, res) => res.json({ ok: true }));
+
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, "../public");
 app.use(express.static(publicDir));
-app.get("/*", (_, res) => res.sendFile(path.join(publicDir, "index.html")));
 
-/* ---------- Start ---------- */
+
+app.get("(.*)", (_req, res) => res.sendFile(path.join(publicDir, "index.html")));
+
+
 const PORT = process.env.PORT || 4000;
 
 mongoose
