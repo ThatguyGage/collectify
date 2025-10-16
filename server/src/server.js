@@ -33,7 +33,11 @@ app.get("/api/health", (_req, res) => res.json({ ok: true }));
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, "../public");
 app.use(express.static(publicDir));
-app.get("*", (_req, res) => res.sendFile(path.join(publicDir, "index.html")));
+
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api")) return next();
+  res.sendFile(path.join(publicDir, "index.html"));
+});
 
 const PORT = process.env.PORT || 4000;
 
