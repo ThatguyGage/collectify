@@ -9,7 +9,6 @@ import itemsRoute from "./routes/items.js";
 
 const app = express();
 
-
 const allowed = [
   "http://localhost:5173",
   process.env.CLIENT_ORIGIN,
@@ -25,33 +24,27 @@ app.use(
   })
 );
 
-
 app.use(express.json());
 app.use(morgan("dev"));
-
 
 app.use("/api/items", itemsRoute);
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, "../public");
 app.use(express.static(publicDir));
-
-
-app.get("(.*)", (_req, res) => res.sendFile(path.join(publicDir, "index.html")));
-
+app.get("*", (_req, res) => res.sendFile(path.join(publicDir, "index.html")));
 
 const PORT = process.env.PORT || 4000;
 
 mongoose
   .connect(process.env.MONGODB_URI, { serverSelectionTimeoutMS: 10000 })
   .then(() => {
-    console.log("✅ Mongo connected");
+    console.log("Mongo connected");
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
   .catch((err) => {
-    console.error("❌ Mongo connection failed:", err?.message || err);
+    console.error("Mongo connection failed:", err?.message || err);
     process.exit(1);
   });
 
