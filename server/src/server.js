@@ -6,6 +6,20 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 import itemsRoute from "./routes/items.js";
+import cors from "cors";
+
+const allowed = [
+  "http://localhost:5173",
+  process.env.CLIENT_ORIGIN,   // <- we'll set this on Render
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, cb) => {
+    if (!origin || allowed.includes(origin)) return cb(null, true);
+    return cb(new Error("Not allowed by CORS"));
+  },
+  credentials: false
+}));
 
 const app = express();
 app.use(cors());
